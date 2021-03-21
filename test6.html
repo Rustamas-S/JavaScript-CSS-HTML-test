@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External requests</title>
+</head>
+<body>
+    <h1>Let's show the HTML code!</h1>
+    <p>
+        <input id="url" type="url" placeholder="Enter website address"/>
+        <input id="selector" type="text" placeholder="Enter CSS selector"/>
+        <button id="getURL" onclick="preview()">Show the code!</button>
+    </p>
+    <div>
+        <h2>The selected content will appear here</h2>
+        <div id="preview"></div>
+    </div>
+    <script>
+        function preview() {
+            const url = document.getElementById("url")["value"];
+            const selector = document.getElementById("selector")["value"];
+            loadHTML(url, selector);
+        }
+
+        function loadHTML(url, selector) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    const parser = new DOMParser();
+                    const urlDocument = parser.parseFromString(this.responseText, "text/html");
+                    extract(urlDocument, selector);
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+        function extract(urlDocument, selector) {
+            const element = urlDocument.querySelector(selector);
+            const preview = document.getElementById("preview");
+            preview.innerText = element.innerText;
+        }
+    </script>
+</body>
+</html>
